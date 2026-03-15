@@ -1,0 +1,66 @@
+# Getting Started with llm-mock
+
+## Installation
+
+```bash
+npm install --save-dev llm-mock
+```
+
+## Your First Mock
+
+```typescript
+import { MockAnthropic } from 'llm-mock'
+
+const client = new MockAnthropic()
+client.onPrompt('hello').reply('Hi there!')
+
+const response = await client.messages.create({
+  model: 'claude-3-opus-20240229',
+  max_tokens: 1024,
+  messages: [{ role: 'user', content: 'Say hello' }],
+})
+
+console.log(response.content[0].text) // "Hi there!"
+```
+
+## Pattern Matching
+
+llm-mock supports multiple ways to match incoming requests:
+
+- **Keyword match**: `client.onPrompt('weather')` matches any message containing "weather"
+- **Regex match**: `client.onPrompt(/\d+/)` matches messages containing digits
+- **System prompt match**: `client.onSystemPrompt('helpful')` matches by system prompt content
+- **Model match**: `client.onModel('gpt-4')` matches by model name
+
+## Inspecting Calls
+
+Every call to the mock client is recorded:
+
+```typescript
+console.log(client.callCount) // number of calls
+console.log(client.lastCall)  // most recent CallRecord
+console.log(client.calls)     // array of all CallRecords
+
+client.reset() // clear call history and patterns
+```
+
+## Using with Vitest
+
+```typescript
+import { describe, it, expect, beforeEach } from 'vitest'
+import { MockAnthropic } from 'llm-mock'
+
+describe('my LLM feature', () => {
+  let client: MockAnthropic
+
+  beforeEach(() => {
+    client = new MockAnthropic()
+    client.onPrompt('summarize').reply('This is a summary.')
+  })
+
+  it('calls the API with the right prompt', async () => {
+    await myFunction(client)
+    expect(client.lastCall?.messages[0].content).toContain('summarize')
+  })
+})
+```
