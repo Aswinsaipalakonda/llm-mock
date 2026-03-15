@@ -983,7 +983,7 @@ Contributions are welcome! Here's how to get involved:
 [MIT](./LICENSE) -- free for personal and commercial use.
 
 ```
-MIT License - Copyright (c) 2024 llm-mock contributors
+MIT License - Copyright (c) 2026 llm-mock contributors
 ```
 
 ---
